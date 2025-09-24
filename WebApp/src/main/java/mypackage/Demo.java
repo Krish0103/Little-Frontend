@@ -1,0 +1,13 @@
+package mypackage;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+@Controller
+public class Demo {
+	@RequestMapping("/add")
+	public String add() {
+		return "display";
+	}
+}
