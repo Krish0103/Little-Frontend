@@ -217,7 +217,7 @@
 
                                 <!-- Checkout Button -->
                                 <div class="d-grid">
-                                    <a href="/cart/checkout" class="btn btn-checkout btn-lg">
+                                    <a href="${pageContext.request.contextPath}/cart/checkout" class="btn btn-checkout btn-lg">
                                         <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
                                     </a>
                                 </div>

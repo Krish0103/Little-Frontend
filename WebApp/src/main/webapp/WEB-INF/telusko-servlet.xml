@@ -9,7 +9,7 @@
            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <ctx:annotation-config />
-    <ctx:component-scan base-package="mypackage"/>
+    <ctx:component-scan base-package="mypackage, com.swiggaa.frontend"/>
     <mvc:annotation-driven />
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
