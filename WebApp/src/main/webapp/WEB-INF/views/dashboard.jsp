@@ -32,7 +32,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <%@ include file="../common/navbar.jsp" %>
+    <%@ include file="common/navbar.jsp" %>
 
     <div class="container mt-4">
         <!-- Welcome Header -->
@@ -40,14 +40,14 @@
             <div class="col">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="display-6 mb-1">Welcome back, ${loggedInUser}!</h1>
+                        <h1 class="display-6 mb-1">Welcome back, ${not empty loggedInUser ? loggedInUser : 'User'}!</h1>
                         <p class="text-muted mb-0">
                             <i class="fas fa-clock me-2"></i>Last login: Today at 2:30 PM
                         </p>
                     </div>
                     <div>
                         <span class="badge bg-primary fs-6">
-                            <i class="fas fa-user me-2"></i>${userRole}
+                            <i class="fas fa-user me-2"></i>${not empty userRole ? userRole : 'USER'}
                         </span>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
         <!-- Quick Stats -->
         <div class="row mb-4">
             <c:choose>
-                <c:when test="${userRole == 'ROLE_USER'}">
+                <c:when test="${userRole == 'ROLE_USER' or empty userRole}">>
                     <!-- Customer Stats -->
                     <div class="col-md-3 mb-3">
                         <div class="card stat-card border-0">
@@ -351,7 +351,7 @@
         </div>
     </div>
 
-    <%@ include file="../common/footer.jsp" %>
+    <%@ include file="common/footer.jsp" %>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

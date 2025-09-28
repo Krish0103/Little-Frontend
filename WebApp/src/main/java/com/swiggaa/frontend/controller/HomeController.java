@@ -20,16 +20,29 @@ public class HomeController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
-        if (session.getAttribute("user") == null) {
+        // Check if user is authenticated
+        String user = (String) session.getAttribute("user");
+        if (user == null || user.trim().isEmpty()) {
             return "redirect:/auth/login";
         }
         
-        String user = (String) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
         
+        // Provide default values to prevent JSP errors
         model.addAttribute("loggedInUser", user);
-        model.addAttribute("userRole", role);
+        model.addAttribute("userRole", role != null ? role : "USER");
+        
+        // Add debug information
+        System.out.println("Dashboard accessed by user: " + user + " with role: " + role);
         
         return "dashboard";
+    }
+    
+    // Test login endpoint - creates a test session for dashboard testing
+    @GetMapping("/test-login")
+    public String testLogin(HttpSession session) {
+        session.setAttribute("user", "testuser");
+        session.setAttribute("role", "ROLE_USER");
+        return "redirect:/dashboard";
     }
 }
