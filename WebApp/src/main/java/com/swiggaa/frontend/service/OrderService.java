@@ -36,6 +36,19 @@ public class OrderService {
                 .bodyToMono(mapType)
                 .onErrorReturn(Map.of("success", false, "message", "Failed to create order"));
     }
+    
+    public Mono<Map<String, Object>> createOrderRequest(Map<String, Object> orderRequest, HttpSession session) {
+        HttpHeaders headers = AuthUtil.createAuthHeaders(session);
+        
+        return orderWebClient.post()
+                .uri("/orders")
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(orderRequest)
+                .retrieve()
+                .bodyToMono(mapType)
+                .onErrorReturn(Map.of("success", false, "message", "Failed to create order"));
+    }
 
     public Mono<Map<String, Object>> getOrderById(Long orderId, HttpSession session) {
         HttpHeaders headers = AuthUtil.createAuthHeaders(session);

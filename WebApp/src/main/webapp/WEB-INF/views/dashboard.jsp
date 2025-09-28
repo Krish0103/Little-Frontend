@@ -63,7 +63,7 @@
                         <div class="card stat-card border-0">
                             <div class="card-body text-center">
                                 <i class="fas fa-shopping-bag mb-2" style="font-size: 2.5rem;"></i>
-                                <h4 class="mb-1">12</h4>
+                                <h4 class="mb-1">${totalOrders != null ? totalOrders : 0}</h4>
                                 <p class="mb-0">Total Orders</p>
                             </div>
                         </div>
@@ -72,8 +72,8 @@
                         <div class="card stat-card border-0">
                             <div class="card-body text-center">
                                 <i class="fas fa-heart mb-2" style="font-size: 2.5rem;"></i>
-                                <h4 class="mb-1">8</h4>
-                                <p class="mb-0">Favorites</p>
+                                <h4 class="mb-1">${recentOrders != null ? recentOrders : 0}</h4>
+                                <p class="mb-0">Active Orders</p>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                         <div class="card stat-card border-0">
                             <div class="card-body text-center">
                                 <i class="fas fa-dollar-sign mb-2" style="font-size: 2.5rem;"></i>
-                                <h4 class="mb-1">₹2,450</h4>
+                                <h4 class="mb-1">₹<fmt:formatNumber value="${totalSpent != null ? totalSpent : 0}" pattern="#,##0.00"/></h4>
                                 <p class="mb-0">Total Spent</p>
                             </div>
                         </div>
@@ -249,27 +249,38 @@
                             <c:when test="${userRole == 'ROLE_USER'}">
                                 <!-- Customer Recent Orders -->
                                 <div class="list-group list-group-flush">
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">Order #12345 - Pizza Margherita</h6>
-                                            <p class="text-muted mb-0 small">Delivered - 2 hours ago</p>
-                                        </div>
-                                        <span class="badge bg-success">₹450</span>
-                                    </div>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">Order #12344 - Chicken Biryani</h6>
-                                            <p class="text-muted mb-0 small">Delivered - 1 day ago</p>
-                                        </div>
-                                        <span class="badge bg-success">₹320</span>
-                                    </div>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">Order #12343 - Burger Combo</h6>
-                                            <p class="text-muted mb-0 small">Delivered - 3 days ago</p>
-                                        </div>
-                                        <span class="badge bg-success">₹280</span>
-                                    </div>
+                                    <c:choose>
+                                        <c:when test="${not empty recentOrdersList}">
+                                            <c:forEach var="order" items="${recentOrdersList}" varStatus="status">
+                                                <c:if test="${status.index < 3}">
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6 class="mb-1">Order #${order.id} - ${order.restaurantName}</h6>
+                                                            <p class="text-muted mb-0 small">
+                                                                <c:choose>
+                                                                    <c:when test="${order.status == 'DELIVERED'}">Completed</c:when>
+                                                                    <c:when test="${order.status == 'CANCELLED'}">Cancelled</c:when>
+                                                                    <c:when test="${order.status == 'OUT_FOR_DELIVERY'}">Out for Delivery</c:when>
+                                                                    <c:when test="${order.status == 'PREPARING'}">Being Prepared</c:when>
+                                                                    <c:when test="${order.status == 'CONFIRMED'}">Confirmed</c:when>
+                                                                    <c:otherwise>Order Placed</c:otherwise>
+                                                                </c:choose>
+                                                            </p>
+                                                        </div>
+                                                        <span class="badge ${order.status == 'DELIVERED' ? 'bg-success' : (order.status == 'CANCELLED' ? 'bg-danger' : 'bg-info')}">
+                                                            ₹<fmt:formatNumber value="${order.totalAmount}" pattern="#,##0.00"/>
+                                                        </span>
+                                                    </div>
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="list-group-item text-center">
+                                                <p class="text-muted mb-2">No recent orders found</p>
+                                                <small class="text-muted">Start ordering to see your activity here!</small>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </c:when>
                             <c:otherwise>
