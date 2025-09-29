@@ -65,6 +65,24 @@ public class Order {
     public LocalDateTime getOrderDate() { return orderDate; }
     public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
     
+    // Getter for JSP compatibility - converts LocalDateTime to Date for fmt:formatDate
+    public java.util.Date getOrderTime() { 
+        return orderDate != null ? java.sql.Timestamp.valueOf(orderDate) : null; 
+    }
+    
+    // Setter for backend compatibility - converts string to LocalDateTime
+    public void setOrderTime(Object orderTime) {
+        if (orderTime instanceof String) {
+            try {
+                this.orderDate = java.time.LocalDateTime.parse((String) orderTime);
+            } catch (Exception e) {
+                System.err.println("Error parsing orderTime: " + orderTime + " - " + e.getMessage());
+            }
+        } else if (orderTime instanceof java.time.LocalDateTime) {
+            this.orderDate = (java.time.LocalDateTime) orderTime;
+        }
+    }
+    
     public LocalDateTime getDeliveryTime() { return deliveryTime; }
     public void setDeliveryTime(LocalDateTime deliveryTime) { this.deliveryTime = deliveryTime; }
     

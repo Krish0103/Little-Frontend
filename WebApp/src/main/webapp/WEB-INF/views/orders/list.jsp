@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,7 +135,7 @@
                                         <div class="col-md-2 text-center mb-3 mb-md-0">
                                             <div class="fw-bold">Order #${order.id}</div>
                                             <small class="text-muted">
-                                                <fmt:formatDate value="${order.orderTime}" pattern="MMM dd, yyyy"/>
+                                                ${fn:substring(order.orderTime, 0, 10)}
                                             </small>
                                             <div class="mt-1">
                                                 <span class="badge status-badge ${order.status.toString().toLowerCase().replace('_', '-')}">

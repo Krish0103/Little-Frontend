@@ -58,7 +58,10 @@ public class OrderService {
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToMono(mapType)
-                .onErrorReturn(Map.of("success", false, "message", "Order not found"));
+                .doOnError(throwable -> {
+                    System.err.println("Error fetching order " + orderId + ": " + throwable.getMessage());
+                })
+                .onErrorReturn(Map.of("success", false, "message", "Unable to load order details. Please try again later."));
     }
 
     public Mono<Map<String, Object>> getOrdersByCustomer(String customerUsername, HttpSession session) {
@@ -69,7 +72,10 @@ public class OrderService {
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToMono(mapType)
-                .onErrorReturn(Map.of("success", false, "message", "Failed to fetch customer orders"));
+                .doOnError(throwable -> {
+                    System.err.println("Error fetching orders for customer " + customerUsername + ": " + throwable.getMessage());
+                })
+                .onErrorReturn(Map.of("success", false, "message", "Unable to connect to order service. Please try again later."));
     }
 
     public Mono<Map<String, Object>> getAllOrders(HttpSession session) {

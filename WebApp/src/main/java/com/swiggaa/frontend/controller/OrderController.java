@@ -40,10 +40,14 @@ public class OrderController {
             if (response != null && (Boolean) response.getOrDefault("success", true)) {
                 model.addAttribute("orders", response.get("data"));
             } else {
-                model.addAttribute("error", "Failed to load orders");
+                String errorMessage = response != null && response.get("message") != null 
+                    ? (String) response.get("message") 
+                    : "Failed to load orders. Please try again later.";
+                model.addAttribute("error", errorMessage);
             }
         } catch (Exception e) {
-            model.addAttribute("error", "Unable to load orders");
+            System.err.println("Exception in viewOrders: " + e.getMessage());
+            model.addAttribute("error", "Service temporarily unavailable. Please try again later.");
         }
 
         return "orders/list";
@@ -60,11 +64,15 @@ public class OrderController {
             if (response != null && (Boolean) response.getOrDefault("success", true)) {
                 model.addAttribute("order", response.get("data"));
             } else {
-                model.addAttribute("error", "Order not found");
+                String errorMessage = response != null && response.get("message") != null 
+                    ? (String) response.get("message") 
+                    : "Order not found or service unavailable";
+                model.addAttribute("error", errorMessage);
                 return "redirect:/orders";
             }
         } catch (Exception e) {
-            model.addAttribute("error", "Unable to load order details");
+            System.err.println("Exception in viewOrderDetails: " + e.getMessage());
+            model.addAttribute("error", "Service temporarily unavailable. Please try again later.");
             return "redirect:/orders";
         }
 

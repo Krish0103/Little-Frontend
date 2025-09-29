@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Swiggaa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .confirmation-card {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .check-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 35px;
+        }
+        
+        .order-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .item-row {
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 0;
+        }
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        
+        .total-row {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .next-steps {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-utensils"></i> Swiggaa</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/menu">Menu</a>
+                <a class="nav-link" href="/cart">Cart</a>
+                <a class="nav-link" href="/orders">Orders</a>
+                <a class="nav-link" href="/auth/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Order Confirmation -->
+                <div th:if="${order != null}">
+                    <!-- Success Header -->
+                    <div class="confirmation-card">
+                        <div class="check-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2 class="mb-3">Order Placed Successfully!</h2>
+                        <p class="mb-2" th:if="${success}" th:text="${success}"></p>
+                        <h4>Order #<span th:text="${order.id}"></span></h4>
+                        <p class="mb-0">Thank you for choosing Swiggaa!</p>
+                    </div>
+
+                    <!-- Order Details Summary -->
+                    <div class="order-summary">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-store"></i> Restaurant</h5>
+                                <p class="text-muted mb-0" th:text="${order.restaurantName}"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-clock"></i> Order Time</h5>
+                                <p class="text-muted mb-0" th:text="${#temporals.format(order.orderTime, 'MMM dd, yyyy HH:mm')}"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-map-marker-alt"></i> Delivery Address</h5>
+                                <p class="text-muted mb-0" th:text="${order.deliveryAddress}"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-phone"></i> Contact</h5>
+                                <p class="text-muted mb-0" th:text="${order.phoneNumber}"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-utensils"></i> Your Order</h5>
+                        </div>
+                        <div class="card-body">
+                            <div th:each="item : ${order.orderItems}" class="item-row">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h6 class="mb-1" th:text="${item.itemName}"></h6>
+                                        <small class="text-muted">₹<span th:text="${item.itemPrice}"></span> each</small>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <span class="badge bg-secondary">Qty: <span th:text="${item.quantity}"></span></span>
+                                    </div>
+                                    <div class="col-md-3 text-end">
+                                        <strong>₹<span th:text="${item.subtotal}"></span></strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="total-row">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5 class="mb-0">Total Amount</h5>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <h5 class="mb-0 text-primary">₹<span th:text="${order.totalAmount}"></span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Special Instructions -->
+                    <div th:if="${order.specialInstructions != null and !order.specialInstructions.isEmpty()}" class="card mt-3">
+                        <div class="card-body">
+                            <h6><i class="fas fa-sticky-note"></i> Special Instructions</h6>
+                            <p class="text-muted mb-0" th:text="${order.specialInstructions}"></p>
+                        </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="next-steps">
+                        <h5 class="text-warning"><i class="fas fa-info-circle"></i> What's Next?</h5>
+                        <ul class="mb-2">
+                            <li>Your order has been sent to the restaurant</li>
+                            <li>You'll receive confirmation once the restaurant accepts your order</li>
+                            <li>Track your order status in real-time</li>
+                            <li>Estimated delivery time: <strong>30-45 minutes</strong></li>
+                        </ul>
+                        <p class="mb-0"><small class="text-muted">You can cancel your order if it hasn't been confirmed by the restaurant yet.</small></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-4">
+                        <div class="btn-group" role="group">
+                            <a th:href="@{/orders/track/{id}(id=${order.id})}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-truck"></i> Track Your Order
+                            </a>
+                            <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a href="/orders" class="btn btn-outline-secondary">
+                            <i class="fas fa-list"></i> View All Orders
+                        </a>
+                        <a href="/menu" class="btn btn-outline-success">
+                            <i class="fas fa-utensils"></i> Order More
+                        </a>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="text-center mt-4">
+                        <p class="text-muted">
+                            <small>
+                                Need help? Contact our support team at 
+                                <a href="tel:+919876543210">+91 98765 43210</a> or 
+                                <a href="mailto:support@swiggaa.com">support@swiggaa.com</a>
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Auto-redirect to tracking after 10 seconds -->
+    <script th:if="${order != null}">
+        let countdown = 10;
+        const redirectBtn = document.querySelector('a[href*="/track/"]');
+        
+        function updateCountdown() {
+            if (countdown > 0) {
+                console.log(`Auto-redirecting to tracking page in ${countdown} seconds...`);
+                countdown--;
+                setTimeout(updateCountdown, 1000);
+            } else {
+                // Uncomment the line below if you want auto-redirect
+                // window.location.href = redirectBtn.href;
+            }
+        }
+        
+        // Start countdown
+        setTimeout(updateCountdown, 3000); // Start after 3 seconds
+    </script>
+</body>
+</html>
